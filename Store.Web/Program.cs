@@ -1,5 +1,4 @@
-﻿
-namespace Store.Web
+﻿namespace Store.Web
 {
 
     using Microsoft.AspNetCore;
