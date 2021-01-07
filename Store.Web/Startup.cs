@@ -33,7 +33,9 @@ namespace Store.Web
 
             services.AddTransient<SeedDb>();
 
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICountryRepository, CountryRepository>();
+
 
             services.Configure<CookiePolicyOptions>(options =>
             {

@@ -12,6 +12,8 @@ namespace Store.Web.Data
 
         public DbSet<Product> Products { get; set; }
 
+        public DbSet<Country> Countries { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base (options)
         {
 
