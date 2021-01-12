@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Store.Web.Data;
 using Store.Web.Data.Entities;
+using Store.Web.Helpers;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Store.Web.Controllers
@@ -10,15 +12,18 @@ namespace Store.Web.Controllers
     {
         private readonly IProductRepository productrepository;
 
-        public ProductsController(IProductRepository productrepository)
+        public IUserHelper UserHelper { get; }
+
+        public ProductsController(IProductRepository productrepository, IUserHelper UserHelper)
         {
             this.productrepository = productrepository;
+            this.UserHelper = UserHelper;
         }
 
         // GET: Products
         public IActionResult Index()
         {
-            return View(this.productrepository.GetAll());
+            return View(this.productrepository.GetAll().OrderBy(p =>p.Name));
         }
 
         // GET: Products/Details/5
@@ -54,6 +59,8 @@ namespace Store.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                //TODO: Change for the logged user
+                product.User = await this.UserHelper.GetUserByEmailAsync("film.afonso@gmail.com");
                 await this.productrepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -86,9 +93,12 @@ namespace Store.Web.Controllers
 
 
             if (ModelState.IsValid)
+
             {
                 try
                 {
+                    //TODO: Change for the logged user
+                    product.User = await this.UserHelper.GetUserByEmailAsync("film.afonso@gmail.com");
                     await this.productrepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
