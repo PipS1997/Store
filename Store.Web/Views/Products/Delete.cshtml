@@ -1,8 +1,6 @@
 ﻿@model Store.Web.Data.Entities.Product
 
-@{
-    ViewData["Title"] = "Delete";
-}
+@{ ViewData["Title"] = "Delete"; }
 
 <h2>Delete</h2>
 
@@ -22,12 +20,6 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ImageUrl)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.LastPurchase)
@@ -53,11 +45,16 @@
         <dd>
             @Html.DisplayFor(model => model.Stock)
         </dd>
+        <dd>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+<img src="@Url.Content(Model.ImageUrl)" alt="image" style="width:300px;height:450px;max-width:100%;height:auto;" />            }
+        </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger"/> |
-        <a asp-action="Index"class="btn btn-success">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-success">Back to List</a>
     </form>
 </div>
