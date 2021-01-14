@@ -21,6 +21,6 @@ namespace Store.Web.Helpers
         Task<IdentityResult> UpdateUserAsync(User user);
 
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
-        Task ValidatePasswordAsync(User user, string password);
+        Task<SignInResult> ValidatePasswordAsync(User user, string password);
     }
 }
