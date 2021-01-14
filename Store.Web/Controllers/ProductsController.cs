@@ -7,6 +7,7 @@ namespace Store.Web.Controllers
     using Store.Web.Data.Entities;
     using Store.Web.Helpers;
     using Store.Web.Models;
+    using System;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -70,20 +71,20 @@ namespace Store.Web.Controllers
 
                 if (view.ImageFile != null && view.ImageFile.Length > 0)
                 {
-                    //var guid = Guid.NewGuid().ToString();
-                    //var file = $"{guid}.jpg";
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
 
                     path = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot\\images\\Products",
-                        view.ImageFile.FileName);
+                       file);
 
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await view.ImageFile.CopyToAsync(stream);
                     }
 
-                    path = $"~/images/Products/{view.ImageFile.FileName}";
+                    path = $"~/images/Products/{file}";
                 }
 
 
@@ -154,7 +155,7 @@ namespace Store.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] ProductViewModel view)
         {
 
 
@@ -163,13 +164,40 @@ namespace Store.Web.Controllers
             {
                 try
                 {
+                    var path = view.ImageUrl;
+
+                    if (view.ImageFile != null && view.ImageFile.Length > 0)
+                    {
+                        path = string.Empty;
+
+                        if (view.ImageFile != null && view.ImageFile.Length > 0)
+                        {
+                            var guid = Guid.NewGuid().ToString();
+                            var file = $"{guid}.jpg";
+
+                            path = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot\\images\\Products",
+                           file);
+
+                            using (var stream = new FileStream(path, FileMode.Create))
+                            {
+                                await view.ImageFile.CopyToAsync(stream);
+                            }
+
+                            path = $"~/images/Products/{file}";
+                        }
+
+                    }
+                    var product = this.ToProduct(view, path);
+
                     //TODO: Change for the logged user
                     product.User = await this.UserHelper.GetUserByEmailAsync("film.afonso@gmail.com");
                     await this.productrepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await this.productrepository.ExistsAsync(product.Id))
+                    if (!await this.productrepository.ExistsAsync(view.Id))
                     {
                         return NotFound();
                     }
@@ -180,10 +208,8 @@ namespace Store.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(view);
         }
-
-
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
