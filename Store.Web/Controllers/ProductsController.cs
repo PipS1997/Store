@@ -1,5 +1,4 @@
-﻿
-namespace Store.Web.Controllers
+﻿namespace Store.Web.Controllers
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -16,10 +15,10 @@ namespace Store.Web.Controllers
 
     public class ProductsController : Controller
     {
-        
+
         private readonly IProductRepository productrepository;
         private readonly IUserHelper userHelper;
-        
+
 
         public IUserHelper UserHelper { get; }
 
@@ -36,24 +35,24 @@ namespace Store.Web.Controllers
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> DetailsAsync(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-
             var product = await this.productrepository.GetByIdAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
             }
+
             return View(product);
         }
 
-
         // GET: Products/Create
+        [Authorize(Roles="Admin")]
         public IActionResult Create()
         {
             return View();
@@ -116,7 +115,9 @@ namespace Store.Web.Controllers
             };
         }
 
+
         // GET: Products/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -134,7 +135,6 @@ namespace Store.Web.Controllers
 
             return View(view);
         }
-
         private ProductViewModel ToProductViewModel(Product product)
         {
             return new ProductViewModel
@@ -156,7 +156,7 @@ namespace Store.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] ProductViewModel view)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageFile,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] ProductViewModel view)
         {
 
 
@@ -211,6 +211,7 @@ namespace Store.Web.Controllers
             return View(view);
         }
         // GET: Products/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

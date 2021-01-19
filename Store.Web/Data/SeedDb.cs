@@ -24,18 +24,18 @@ namespace Store.Web.Data
         {
             await this.context.Database.EnsureCreatedAsync();
 
-            //await this.userHelper.CheckRoleAsync("Admin");
-            //await this.userHelper.CheckRoleAsync("Customer");
+            await this.userHelper.CheckRoleAsync("Admin");
+            await this.userHelper.CheckRoleAsync("Customer");
 
-            var user = await this.userHelper.GetUserByEmailAsync("film.afonso@gmail.com");
+            var user = await this.userHelper.GetUserByEmailAsync("filipeafonso@gmail.com");
             if (user == null)
             {
                 user = new User
                 {
                     FirstName = "Filipe",
                     LastName = "Afonso",
-                    Email = "film.afonso@gmail.com",
-                    UserName = "PipS",
+                    Email = "filipeafonso@gmail.com",
+                    UserName = "filipeafonso@gmail.com",
                     PhoneNumber = "937316988",
                 };
 
@@ -43,7 +43,15 @@ namespace Store.Web.Data
                 if (result != IdentityResult.Success)
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
-                };
+                }
+
+                await this.userHelper.AddUserToRoleAsync(user, "Admin");
+            }
+
+            var isRole = await this.userHelper.IsUserInRoleAsync(user, "Admin");
+            if (!isRole)
+            {
+                await this.userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
             if (!this.context.Products.Any())
