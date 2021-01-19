@@ -16,7 +16,7 @@ namespace Store.Web.Controllers
 
     public class ProductsController : Controller
     {
-      
+        
         private readonly IProductRepository productrepository;
         private readonly IUserHelper userHelper;
         
